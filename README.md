@@ -92,7 +92,7 @@ python -m roadsafe_rag.evaluate
 
 ### Results
 
-_Evaluated on 2026-10-07 using `sentence-transformers/all-MiniLM-L6-v2` with FAISS flat inner-product search (top_k=5, min_score=0.30)._
+_Evaluated on 2026-10-07 with Groq LLM (`qwen/qwen3.8-27b`), `sentence-transformers/all-MiniLM-L6-v2` embeddings, and FAISS flat inner-product search (top_k=5, min_score=0.30)._
 
 | Metric | Value |
 |---|---|
@@ -101,11 +101,11 @@ _Evaluated on 2026-10-07 using `sentence-transformers/all-MiniLM-L6-v2` with FAI
 | out_of_scope | 5 |
 | retrieval_hit_rate | 1.0 |
 | mrr | 1.0 |
-| answer_keyword_rate | 1.0 |
+| answer_keyword_rate | 0.812 |
 | false_refusal_rate | 0.0 |
-| correct_refusal_rate | 0.8 |
+| correct_refusal_rate | 1.0 |
 | citation_rate_when_answered | 1.0 |
-| avg_latency_ms | 25.971 |
+| avg_latency_ms | 6256.21 |
 
 ## Design decisions
 
