@@ -1,0 +1,7 @@
+numpy
+pypdf
+requests
+sentence-transformers
+faiss-cpu
+fastapi
+uvicorn[standard]

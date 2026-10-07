@@ -1,0 +1,3 @@
+# Copy lines like these into golden_questions.jsonl AFTER reading the PDF.
+# expected_keywords: words/numbers that must appear in the passage that answers the question.
+{"question": "<a factual question the report answers>", "in_scope": true, "expected_keywords": ["<keyword 1>", "<keyword 2>"]}
