@@ -3,6 +3,7 @@ product equals cosine similarity."""
 from __future__ import annotations
 
 import hashlib
+import os
 import re
 from typing import Protocol, Sequence
 
@@ -63,7 +64,27 @@ class SentenceTransformerEmbedder:
         return np.asarray(vecs, dtype="float32")
 
 
+class FastEmbedEmbedder:
+    """ONNX-based embeddings (fastembed): no PyTorch, so it fits small free hosts.
+
+    Set FASTEMBED_CACHE_PATH so the model is cached on disk (the default is a temp dir).
+    """
+
+    def __init__(self, model_name: str) -> None:
+        from fastembed import TextEmbedding  # lazy import
+
+        self.name = f"fastembed:{model_name}"
+        self._model = TextEmbedding(model_name=model_name, cache_dir=os.getenv("FASTEMBED_CACHE_PATH") or None)
+        self.dim = int(len(next(iter(self._model.embed(["dimension probe"])))))
+
+    def encode(self, texts: Sequence[str]) -> np.ndarray:
+        vecs = np.array(list(self._model.embed(list(texts))), dtype="float32")
+        return _normalize(vecs)
+
+
 def get_embedder(kind: str, model_name: str) -> Embedder:
     if kind == "hashing":
         return HashingEmbedder()
+    if kind == "fastembed":
+        return FastEmbedEmbedder(model_name)
     return SentenceTransformerEmbedder(model_name)
