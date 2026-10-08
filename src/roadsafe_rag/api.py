@@ -8,10 +8,13 @@ import logging
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, Field
 
 from .factory import build_pipeline
 from .guardrails import MAX_QUESTION_CHARS
+from .llm import ExtractiveLLM
+from .ui import INDEX_HTML
 
 logger = logging.getLogger("roadsafe_rag")
 
@@ -50,6 +53,11 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="RoadSafe RAG", version="0.1.0", lifespan=lifespan)
 
 
+@app.get("/", response_class=HTMLResponse)
+def index() -> str:
+    return INDEX_HTML
+
+
 @app.get("/health")
 def health() -> dict:
     ready = app.state.pipeline is not None
@@ -63,9 +71,15 @@ def ask(req: AskRequest) -> dict:
         raise HTTPException(status_code=503, detail="Index not loaded. Run ingestion first.")
     try:
         result = pipeline.answer(req.question)
-    except RuntimeError as exc:  # LLM provider failure
-        logger.error("Generation failed: %s", exc)
-        raise HTTPException(status_code=502, detail=f"The language model request failed: {exc}") from exc
+    except RuntimeError as exc:  # LLM provider failure, graceful fallback
+        logger.warning("Primary LLM generation failed: %s; falling back to extractive answerer", exc)
+        prev_llm = pipeline.llm
+        try:
+            pipeline.llm = ExtractiveLLM()
+            result = pipeline.answer(req.question)
+        finally:
+            pipeline.llm = prev_llm
 
     logger.info("ask refused=%s reason=%s latency_ms=%s", result.refused, result.reason, result.latency_ms)
     return result.to_dict()
+

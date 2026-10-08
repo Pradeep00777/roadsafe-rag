@@ -53,7 +53,9 @@ class GroqLLM:
               continue
             if resp.status_code in (500, 502, 503, 504):
               raise requests.HTTPError(f"retryable status {resp.status_code}")
-            resp.raise_for_status()
+            if not resp.ok:
+              # Non-retryable client error (400, 401, 403, 404, etc.)
+              raise RuntimeError(f"Groq API client error {resp.status_code}: {resp.text}")
             return resp.json()["choices"][0]["message"]["content"].strip()
           except requests.RequestException as exc:
             err_msg = f"{exc} - {exc.response.text}" if getattr(exc, "response", None) is not None and exc.response is not None else str(exc)
