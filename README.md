@@ -92,20 +92,21 @@ python -m roadsafe_rag.evaluate
 
 ### Results
 
-_Evaluated on 2026-10-07 with Groq LLM (`qwen/qwen3.8-27b`), `sentence-transformers/all-MiniLM-L6-v2` embeddings, and FAISS flat inner-product search (top_k=5, min_score=0.30)._
+Both the default PyTorch embedder (`sentence-transformers`) and the lightweight ONNX embedder (`fastembed` used in Render deployment) were evaluated on the 21-question golden set with Groq LLM (`qwen/qwen3.8-27b`) and FAISS flat inner-product search (top_k=5, min_score=0.30):
 
-| Metric | Value |
-|---|---|
-| questions | 21 |
-| in_scope | 16 |
-| out_of_scope | 5 |
-| retrieval_hit_rate | 1.0 |
-| mrr | 1.0 |
-| answer_keyword_rate | 0.812 |
-| false_refusal_rate | 0.0 |
-| correct_refusal_rate | 1.0 |
-| citation_rate_when_answered | 1.0 |
-| avg_latency_ms | 6256.21 |
+| Metric | sentence-transformers (PyTorch) | fastembed (ONNX / Render) |
+|---|---|---|
+| Questions Evaluated | 21 | 21 |
+| In-Scope Questions | 16 | 16 |
+| Out-of-Scope Questions | 5 | 5 |
+| Retrieval Hit Rate | **1.0 (100%)** | **1.0 (100%)** |
+| Mean Reciprocal Rank (MRR) | **1.0** | **1.0** |
+| Answer Keyword Rate | **0.812 (81.2%)** | **0.812 (81.2%)** |
+| False Refusal Rate | **0.0 (0%)** | **0.0 (0%)** |
+| Correct Refusal Rate (Adversarial / OOS) | **1.0 (100%)** | **1.0 (100%)** |
+| Citation Rate When Answered | **1.0 (100%)** | **1.0 (100%)** |
+| Average Latency (ms) | 6,256 ms | 6,226 ms |
+
 
 ## Design decisions
 
