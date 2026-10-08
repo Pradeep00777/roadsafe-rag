@@ -8,8 +8,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app/src \
     EMBEDDER=fastembed \
     EMBEDDING_MODEL=${EMBEDDING_MODEL} \
+    GROQ_MODEL=qwen/qwen3.8-27b \
     FASTEMBED_CACHE_PATH=/app/.fastembed \
     INDEX_DIR=/app/data/index
+
 
 COPY requirements-render.txt .
 RUN pip install --no-cache-dir -r requirements-render.txt

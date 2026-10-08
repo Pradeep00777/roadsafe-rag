@@ -65,6 +65,7 @@ def ask(req: AskRequest) -> dict:
         result = pipeline.answer(req.question)
     except RuntimeError as exc:  # LLM provider failure
         logger.error("Generation failed: %s", exc)
-        raise HTTPException(status_code=502, detail="The language model request failed.") from exc
+        raise HTTPException(status_code=502, detail=f"The language model request failed: {exc}") from exc
+
     logger.info("ask refused=%s reason=%s latency_ms=%s", result.refused, result.reason, result.latency_ms)
     return result.to_dict()

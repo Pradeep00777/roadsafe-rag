@@ -56,7 +56,8 @@ class GroqLLM:
             resp.raise_for_status()
             return resp.json()["choices"][0]["message"]["content"].strip()
           except requests.RequestException as exc:
-            last_error = exc
+            err_msg = f"{exc} - {exc.response.text}" if getattr(exc, "response", None) is not None and exc.response is not None else str(exc)
+            last_error = RuntimeError(err_msg)
             time.sleep(2**attempt)
         raise RuntimeError(
             f"LLM request failed after {self.retries} attempts: {last_error}"

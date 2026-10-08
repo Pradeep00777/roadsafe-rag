@@ -28,5 +28,6 @@ def get_settings() -> Settings:
         top_k=int(os.getenv("TOP_K", "5")),
         min_score=float(os.getenv("MIN_SCORE", "0.30")),
         groq_api_key=os.getenv("GROQ_API_KEY") or None,
-        groq_model=os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile"),
+        groq_model=os.getenv("GROQ_MODEL", "qwen/qwen3.8-27b"),
     )
+
